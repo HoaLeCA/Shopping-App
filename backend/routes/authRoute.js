@@ -8,12 +8,27 @@ const {
   getUser,
   deleteUser,
   updateUser,
+  blockUser,
+  unBlockUser,
+  handleRefreshToken,
+  logout,
+  updatePassword,
+  forgotPasswordToken,
 } = require('../controller/userController');
 
 router.post('/', registerUser);
+router.post('/forgot-password-token', forgotPasswordToken);
+router.put('/password', protect, updatePassword);
+
 router.post('/login', loginUser);
+router.get('/refresh', handleRefreshToken);
+router.get('/logout', logout);
 router.get('/', protect, admin, getUsers);
 router.get('/:id', protect, admin, getUser);
-router.delete('/:id', deleteUser);
+
+router.delete('/:id', protect, admin, deleteUser);
 router.put('/:id', protect, updateUser);
+router.put('/block/:id', protect, admin, blockUser);
+router.put('/unblock/:id', protect, admin, unBlockUser);
+
 module.exports = router;
