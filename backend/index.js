@@ -5,6 +5,10 @@ const connectDB = require('./config/db');
 const { errorHandler, notFound } = require('./middlewares/errorMiddleware');
 const authRoute = require('./routes/authRoute');
 const productRoute = require('./routes/productRoute');
+const blogRoute = require('./routes/blogRoute');
+const procategoryRoute = require('./routes/procategoryRoute');
+const blogcategoryRoute = require('./routes/blogcategoryRoute');
+const brandRoute = require('./routes/brandRoute');
 const cookieParser = require('cookie-parser'); // for refresh token
 const morgan = require('morgan');
 
@@ -23,6 +27,10 @@ app.use(cookieParser());
 
 app.use('/api/users', authRoute);
 app.use('/api/products', productRoute);
+app.use('/api/blogs', blogRoute);
+app.use('/api/prodcategory', procategoryRoute);
+app.use('/api/blogcategory', blogcategoryRoute);
+app.use('/api/brand', brandRoute);
 
 app.use(errorHandler);
 app.use(notFound);

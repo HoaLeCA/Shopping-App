@@ -1,6 +1,8 @@
 const Product = require('../models/productModel');
 const asyncHandler = require('express-async-handler');
+const User = require('../models/userModel');
 const slugify = require('slugify');
+const validMongoDbId = require('../utils/validateMongodbId');
 
 // create new product
 // @desc    create new product
@@ -26,6 +28,7 @@ const createProduct = asyncHandler(async (req, res) => {
 
 const updateProduct = asyncHandler(async (req, res) => {
   const { id } = req.params;
+  validMongoDbId(id);
   try {
     if (req.body.title) {
       req.body.slug = slugify(req.body.title);
@@ -45,6 +48,7 @@ const updateProduct = asyncHandler(async (req, res) => {
 
 const deleteProduct = asyncHandler(async (req, res) => {
   const { id } = req.params;
+  validMongoDbId(id);
   try {
     const product = await Product.findByIdAndDelete(id);
     if (product) {
@@ -63,6 +67,7 @@ const deleteProduct = asyncHandler(async (req, res) => {
 
 const getProductById = asyncHandler(async (req, res) => {
   const { id } = req.params;
+  validMongoDbId(id);
   const product = await Product.findById(id);
   if (product) {
     res.json(product);
@@ -125,10 +130,116 @@ const getAllProduct = asyncHandler(async (req, res) => {
   }
 });
 
+// create wishlist function
+// @desc   push product into wishlist
+// @router PUT/api/products/:id
+// @access public
+
+const toWishList = asyncHandler(async (req, res) => {
+  const { _id } = req.user; // get userId from middleware when user login
+  const { productId } = req.body; // get product id from user input
+  try {
+    // find user have _id
+    const user = await User.findById(_id);
+    const alreadyInWishList = user.wishlist.find(
+      (id) => id.toString() === productId
+    );
+    if (alreadyInWishList) {
+      let user = await User.findByIdAndUpdate(
+        _id,
+        {
+          $pull: { wishlist: productId },
+        },
+        { new: true }
+      );
+      res.json(user);
+    } else {
+      let user = await User.findByIdAndUpdate(
+        _id,
+        {
+          $push: { wishlist: productId },
+        },
+        { new: true }
+      );
+      res.json(user);
+    }
+  } catch (error) {
+    throw new Error(error);
+  }
+});
+
+// create rating function
+// @desc   user can rate the products
+// @router PUT/api/products/:id
+// @access public
+
+const rating = asyncHandler(async (req, res) => {
+  const { _id } = req.user; // get user id when user login throw middleware
+  const { star, productId, comment } = req.body; // get product id from user input
+  // find product
+
+  try {
+    const product = await Product.findById(productId);
+    // find product find by user not
+    let alreadyRated = product.rating.find(
+      (userId) => userId.postedBy.toString() === _id.toString()
+    );
+    if (alreadyRated) {
+      const updateRating = await Product.updateOne(
+        {
+          rating: { $elemMatch: alreadyRated },
+        },
+        {
+          $set: { 'rating.$.star': star, 'rating.$.comment': comment },
+        },
+        { new: true }
+      );
+      // res.json(updateRating);
+    } else {
+      const rateProduct = await Product.findByIdAndUpdate(
+        productId,
+        {
+          $push: {
+            rating: {
+              star: star,
+              comment: comment,
+              postedBy: _id,
+            },
+          },
+        },
+
+        { new: true }
+      );
+      // res.json(rateProduct);
+    }
+    // create total rating
+    const getallRating = await Product.findById(productId);
+    let totalrating = getallRating.rating.length;
+
+    let ratingSum = getallRating.rating
+      .map((item) => item.star)
+      .reduce((pre, crr) => pre + crr, 0);
+    let actualRating = Math.round(ratingSum / totalrating);
+    // update into product
+    const updatedRating = await Product.findByIdAndUpdate(
+      productId,
+      {
+        totalrating: actualRating,
+      },
+      { new: true }
+    );
+    res.json(updatedRating);
+  } catch (error) {
+    throw new Error(error);
+  }
+});
+
 module.exports = {
   createProduct,
   getProductById,
   getAllProduct,
   updateProduct,
   deleteProduct,
+  toWishList,
+  rating,
 };

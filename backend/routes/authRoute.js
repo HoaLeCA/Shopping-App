@@ -14,12 +14,14 @@ const {
   logout,
   updatePassword,
   forgotPasswordToken,
+  resetPassword,
 } = require('../controller/userController');
 
 router.post('/', registerUser);
 router.post('/forgot-password-token', forgotPasswordToken);
-router.put('/password', protect, updatePassword);
+router.put('/reset-password/:token', resetPassword);
 
+router.put('/password', protect, updatePassword);
 router.post('/login', loginUser);
 router.get('/refresh', handleRefreshToken);
 router.get('/logout', logout);

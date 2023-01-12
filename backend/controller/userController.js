@@ -6,6 +6,7 @@ const generateToken = require('../utils/generateToken.js');
 const validMongoDbId = require('../utils/validateMongodbId');
 const generateRefreshToken = require('../utils/refreshToken');
 const sendEmail = require('./emailController');
+const crypto = require('crypto');
 
 // @desc    create user
 // @router POST/api/users
@@ -303,6 +304,28 @@ const forgotPasswordToken = asyncHandler(async (req, res) => {
   }
 });
 
+// reset password
+
+const resetPassword = asyncHandler(async (req, res) => {
+  const { password } = req.body;
+  const { token } = req.params;
+
+  const hashedToken = crypto.createHash('sha256').update(token).digest('hex');
+  // find user with hashedToken to reset
+  const user = await User.findOne({
+    passwordRestToken: hashedToken,
+    passwordResetExpired: { $gt: Date.now() },
+  });
+  // validate user
+  if (!user) throw new Error('Token is expired, please try again');
+  user.password = password;
+  // clear resettoken and password reset expire in database
+  user.passwordRestToken = undefined;
+  user.passwordResetExpired = undefined;
+  await user.save();
+  res.json(user);
+});
+
 // export model
 module.exports = {
   registerUser,
@@ -317,4 +340,5 @@ module.exports = {
   logout,
   updatePassword,
   forgotPasswordToken,
+  resetPassword,
 };
