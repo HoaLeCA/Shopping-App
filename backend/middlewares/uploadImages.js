@@ -40,7 +40,7 @@ const productImgResize = async (req, res, next) => {
         .resize(300, 300)
         .toFormat('jpeg')
         .jpeg({ quality: 90 })
-        .toFile(`public/${file.filename}`);
+        .toFile(`backend/public/images/products/${file.filename}`);
     })
   );
   next();
@@ -53,7 +53,7 @@ const blogImgResize = async (req, res, next) => {
         .resize(300, 300)
         .toFormat('jpeg')
         .jpeg({ quality: 90 })
-        .toFile(`public/${file.filename}`);
+        .toFile(`backend/public/images/blogs/${file.filename}`);
     })
   );
   next();

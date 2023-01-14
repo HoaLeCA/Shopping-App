@@ -3,7 +3,9 @@ const asyncHandler = require('express-async-handler');
 const User = require('../models/userModel');
 const slugify = require('slugify');
 const validMongoDbId = require('../utils/validateMongodbId');
-const cloudinaryUploadImg = require('../utils/cloudinary');
+const cloudinary = require('../utils/cloudinary');
+const cloudinaryUploadImage = require('../utils/cloudinary');
+
 // create new product
 // @desc    create new product
 // @router POST/api/products
@@ -242,29 +244,33 @@ const rating = asyncHandler(async (req, res) => {
 const uploadImages = asyncHandler(async (req, res) => {
   const { id } = req.params;
   validMongoDbId(id);
-  try {
-    const uploader = (path) => cloudinaryUploadImg(path, 'images');
-    const urls = [];
-    const files = req.files;
-    for (const file of files) {
-      const { path } = file;
-      const newPath = await uploader(path);
-      urls.push(newPath);
-    }
-    const findProduct = await Product.findByIdAndUpdate(id, {
-      images: urls.map(
-        (file) => {
-          return file;
-        },
-        {
-          new: true,
-        }
-      ),
-    });
-    res.json(findProduct);
-  } catch (error) {
-    throw new Error(error);
+  const uploader = (path) => cloudinaryUploadImage(path, 'images');
+  const files = req.files;
+  const urls = [];
+  for (const file of files) {
+    const { path } = file;
+    const newPath = await uploader(path);
+    // const result = await cloudinary.uploader.upload(path, 'product');
+    // console.log(result);
+    urls.push(newPath);
   }
+
+  // find the product with id and update url
+
+  const findProduct = await Product.findByIdAndUpdate(
+    id,
+    {
+      $set: { images: urls },
+    },
+    {
+      new: true,
+    }
+  );
+  if (!findProduct) {
+    res.status(404).json({ message: 'Product not found' });
+    return;
+  }
+  res.json(findProduct);
 });
 
 module.exports = {

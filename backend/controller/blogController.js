@@ -2,6 +2,7 @@ const Blog = require('../models/blogModel');
 const User = require('../models/userModel');
 const asyncHandler = require('express-async-handler');
 const validMongoDbId = require('../utils/validateMongodbId');
+const cloudinaryUploadImg = require('../utils/cloudinary');
 
 // @desc    create new product
 // @router POST/api/blogs
@@ -198,6 +199,45 @@ const dislikeBlog = asyncHandler(async (req, res) => {
   }
 });
 
+// upload images function
+// @desc   admin can load images with related blog
+// @router PUT/api/upload/:id (id is blog id)
+// @access Private/admin only
+
+const uploadImages = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+
+  validMongoDbId(id);
+  try {
+    const urls = [];
+    const files = req.files;
+
+    for (const file of files) {
+      const { path } = file;
+
+      const newPath = await cloudinaryUploadImg(path, `images`);
+      urls.push(newPath);
+    }
+
+    const findBlog = await Blog.findByIdAndUpdate(
+      id,
+      {
+        $set: { images: urls },
+      },
+      {
+        new: true,
+      }
+    );
+    if (!findBlog) {
+      res.status(404).json({ message: 'Blog not found' });
+      return;
+    }
+    res.json(findBlog);
+  } catch (error) {
+    throw new Error(error);
+  }
+});
+
 module.exports = {
   createBlog,
   updateBlog,
@@ -206,4 +246,5 @@ module.exports = {
   deleteBlog,
   likeBlog,
   dislikeBlog,
+  uploadImages,
 };
