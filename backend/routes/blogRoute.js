@@ -19,9 +19,8 @@ router.put(
   protect,
   admin,
   uploadPhoto.array('images', 2),
-
-  uploadImages,
-  blogImgResize
+  blogImgResize,
+  uploadImages
 );
 router.put('/likes', protect, likeBlog); // like a blog
 router.put('/dislikes', protect, dislikeBlog); // like a blog
