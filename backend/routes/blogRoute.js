@@ -8,10 +8,21 @@ const {
   likeBlog,
   dislikeBlog,
 } = require('../controller/blogController');
+const { uploadImages } = require('../controller/productController');
 const { protect, admin } = require('../middlewares/authMiddleware');
+const { uploadPhoto, blogImgResize } = require('../middlewares/uploadImages');
 const router = express.Router();
 
 router.post('/', protect, admin, createBlog); // only admin can create blog
+router.put(
+  '/upload/:id',
+  protect,
+  admin,
+  uploadPhoto.array('images', 2),
+
+  uploadImages,
+  blogImgResize
+);
 router.put('/likes', protect, likeBlog); // like a blog
 router.put('/dislikes', protect, dislikeBlog); // like a blog
 

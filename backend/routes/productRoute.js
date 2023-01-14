@@ -9,9 +9,22 @@ const {
   deleteProduct,
   toWishList,
   rating,
+  uploadImages,
 } = require('../controller/productController');
+const {
+  uploadPhoto,
+  productImgResize,
+} = require('../middlewares/uploadImages');
 
 router.post('/', protect, admin, createProduct);
+router.put(
+  '/upload/:id',
+  protect,
+  admin,
+  uploadPhoto.array('images', 10),
+  productImgResize,
+  uploadImages
+);
 router.get('/:id', getProductById);
 router.get('/', getAllProduct);
 router.put('/rating', protect, rating);

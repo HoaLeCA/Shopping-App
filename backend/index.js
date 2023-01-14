@@ -9,6 +9,7 @@ const blogRoute = require('./routes/blogRoute');
 const procategoryRoute = require('./routes/procategoryRoute');
 const blogcategoryRoute = require('./routes/blogcategoryRoute');
 const brandRoute = require('./routes/brandRoute');
+const couponRoute = require('./routes/couponRoute');
 const cookieParser = require('cookie-parser'); // for refresh token
 const morgan = require('morgan');
 
@@ -31,6 +32,7 @@ app.use('/api/blogs', blogRoute);
 app.use('/api/prodcategory', procategoryRoute);
 app.use('/api/blogcategory', blogcategoryRoute);
 app.use('/api/brand', brandRoute);
+app.use('/api/coupon', couponRoute);
 
 app.use(errorHandler);
 app.use(notFound);

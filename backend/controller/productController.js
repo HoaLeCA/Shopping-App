@@ -3,7 +3,7 @@ const asyncHandler = require('express-async-handler');
 const User = require('../models/userModel');
 const slugify = require('slugify');
 const validMongoDbId = require('../utils/validateMongodbId');
-
+const cloudinaryUploadImg = require('../utils/cloudinary');
 // create new product
 // @desc    create new product
 // @router POST/api/products
@@ -168,7 +168,7 @@ const toWishList = asyncHandler(async (req, res) => {
   }
 });
 
-// create rating function
+// create rating and comment function
 // @desc   user can rate the products
 // @router PUT/api/products/:id
 // @access public
@@ -234,6 +234,39 @@ const rating = asyncHandler(async (req, res) => {
   }
 });
 
+// upload images function
+// @desc   admin can load images with related products
+// @router PUT/api/upload/:id (id is product id)
+// @access Private/admin only
+
+const uploadImages = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+  validMongoDbId(id);
+  try {
+    const uploader = (path) => cloudinaryUploadImg(path, 'images');
+    const urls = [];
+    const files = req.files;
+    for (const file of files) {
+      const { path } = file;
+      const newPath = await uploader(path);
+      urls.push(newPath);
+    }
+    const findProduct = await Product.findByIdAndUpdate(id, {
+      images: urls.map(
+        (file) => {
+          return file;
+        },
+        {
+          new: true,
+        }
+      ),
+    });
+    res.json(findProduct);
+  } catch (error) {
+    throw new Error(error);
+  }
+});
+
 module.exports = {
   createProduct,
   getProductById,
@@ -242,4 +275,5 @@ module.exports = {
   deleteProduct,
   toWishList,
   rating,
+  uploadImages,
 };
