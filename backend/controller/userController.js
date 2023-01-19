@@ -2,6 +2,9 @@ const asyncHandler = require('express-async-handler');
 const bycryt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const User = require('../models/userModel');
+const Product = require('../models/productModel');
+const Card = require('../models/cardModel');
+const Coupon = require('../models/couponModel');
 const generateToken = require('../utils/generateToken.js');
 const validMongoDbId = require('../utils/validateMongodbId');
 const generateRefreshToken = require('../utils/refreshToken');
@@ -64,6 +67,52 @@ const loginUser = asyncHandler(async (req, res) => {
   // file user from database by search for email(email is unique in the database)
 
   const user = await User.findOne({ email });
+
+  // check user is valiad and compare password user input with user registered
+
+  if (user && (await bycryt.compare(password, user.password))) {
+    const refreshToken = await generateRefreshToken(user?.id);
+    const updateUser = await User.findByIdAndUpdate(
+      user.id,
+      {
+        refreshToken: refreshToken,
+      },
+      {
+        new: true,
+      }
+    );
+    res.cookie('refreshToken', refreshToken, {
+      httpOnly: true,
+      maxAge: 72 * 60 * 60 * 1000,
+    });
+    res.status(200).json({
+      _id: user.id,
+      name: user.firstname + ' ' + user.lastname,
+      email: user.email,
+      phone: user.mobile,
+      token: generateToken(user._id),
+    });
+  } else {
+    res.status(400);
+    throw new Error('Invalid verify email and password');
+  }
+});
+
+// @desc    Authenticate Admin
+// @router POST/api/users/admin-login
+// @access Private/admin only
+
+const loginAdmin = asyncHandler(async (req, res) => {
+  const { email, password } = req.body;
+
+  // file user from database by search for email(email is unique in the database)
+
+  const user = await User.findOne({ email });
+  console.log(user.role);
+
+  //verify this user is admin or not
+  if (user.role !== 'admin')
+    throw new Error('Not Authorized, You are not Admin');
 
   // check user is valiad and compare password user input with user registered
 
@@ -192,8 +241,8 @@ const deleteUser = asyncHandler(async (req, res) => {
 // @router PUT/api/users/:id
 // @access Private/Admin
 const updateUser = asyncHandler(async (req, res) => {
-  const { id } = req.user;
-  validMongoDbId(id);
+  const { _id } = req.user;
+  validMongoDbId(_id);
   try {
     const user = await User.findByIdAndUpdate(
       _id,
@@ -202,6 +251,28 @@ const updateUser = asyncHandler(async (req, res) => {
         lasttname: req?.body?.lastname,
         email: req?.body?.email,
         mobile: req?.body?.mobile,
+      },
+      { new: true }
+    );
+
+    res.json(user);
+  } catch (error) {
+    res.status(400);
+    throw new Error('User not found');
+  }
+});
+
+// @desc   Save user address using ID
+// @router PUT/api/users/:id
+// @access Public
+const saveAddress = asyncHandler(async (req, res) => {
+  const { _id } = req.user;
+  validMongoDbId(_id);
+  try {
+    const user = await User.findByIdAndUpdate(
+      _id,
+      {
+        address: req?.body?.address,
       },
       { new: true }
     );
@@ -304,7 +375,9 @@ const forgotPasswordToken = asyncHandler(async (req, res) => {
   }
 });
 
-// reset password
+// @desc   User can reset password
+// @router PUT/api/users/:id
+// @access Public
 
 const resetPassword = asyncHandler(async (req, res) => {
   const { password } = req.body;
@@ -326,10 +399,135 @@ const resetPassword = asyncHandler(async (req, res) => {
   res.json(user);
 });
 
+// @desc   User get wishlist
+// @router get/api/users/:id
+// @access Public
+
+const getWishList = asyncHandler(async (req, res) => {
+  const { _id } = req.user;
+  validMongoDbId(_id);
+  try {
+    // find user
+
+    const user = await User.findById(_id).populate('wishlist');
+    res.json(user);
+  } catch (error) {
+    throw new Error(error);
+  }
+});
+
+// @desc   create user card
+// @router get/api/card/:id
+// @access Public
+
+const userCard = asyncHandler(async (req, res) => {
+  const { card } = req.body;
+  const { _id } = req.user;
+  validMongoDbId(_id);
+
+  try {
+    let products = [];
+    const user = await User.findById(_id);
+    // check if user already has products in card
+    const alreadyExistCard = await Card.findOne({ orderBy: user._id });
+    if (alreadyExistCard) {
+      alreadyExistCard.remove();
+    }
+
+    for (let i = 0; i < card.length; i++) {
+      let object = {};
+      object.product = card[i]._id;
+      object.count = card[i].count;
+      object.color = card[i].color;
+      let getPrice = await Product.findById(card[i]._id).select('price').exec();
+
+      object.price = getPrice.price;
+      products.push(object);
+    }
+    let cardTotal = 0;
+    for (let i = 0; i < products.length; i++) {
+      cardTotal = cardTotal + products[i].price * products[i].count;
+    }
+    // update a card
+    let newCard = await new Card({
+      products,
+      cardTotal,
+      orderBy: user?._id,
+    }).save();
+    res.json(newCard);
+  } catch (error) {
+    throw new Error(error);
+  }
+});
+// @desc   get card
+// @router get/api/card/:id
+// @access Public
+
+const getUserCard = asyncHandler(async (req, res) => {
+  const { _id } = req.user;
+  validMongoDbId(_id);
+
+  try {
+    const card = await Card.findOne({ orderBy: _id }).populate(
+      'products.product'
+    );
+    res.json(card);
+  } catch (error) {
+    throw new Error(error);
+  }
+});
+
+// @desc   empty user card
+// @router Delete/api/card/:id
+// @access Public
+const emptyUserCard = asyncHandler(async (req, res) => {
+  const { _id } = req.user;
+  validMongoDbId(_id);
+  try {
+    const user = await User.findById(_id);
+    const card = await Card.findOneAndRemove({ orderBy: user._id });
+    res.json(card);
+  } catch (error) {
+    throw new Error(error);
+  }
+});
+
+// @desc   Apply coupon on the order
+// @router put/api/apply-coupon
+// @access Public
+
+const applyCoupon = asyncHandler(async (req, res) => {
+  // get copoun from user input
+  const { coupon } = req.body;
+  const { _id } = req.user;
+  validMongoDbId(_id);
+  // find the coupon in the database
+  const validCoupon = await Coupon.findOne({ name: coupon });
+  if (validCoupon === null) throw new Error('Invalid Coupon');
+  // find user with a coupon
+  const user = await User.findById(_id);
+  //find card total from database
+  let { cardTotal } = await Card.findOne({ orderBy: user._id }).populate(
+    'products.product'
+  );
+  let totalAfterDiscount = (
+    cardTotal -
+    (cardTotal * validCoupon.discount) / 100
+  ).toFixed(2);
+  await Card.findOneAndUpdate(
+    {
+      orderBy: user._id,
+    },
+    { totalAfterDiscount }
+  );
+  res.json(totalAfterDiscount);
+});
+
 // export model
 module.exports = {
   registerUser,
   loginUser,
+  loginAdmin,
   getUsers,
   getUser,
   deleteUser,
@@ -341,4 +539,10 @@ module.exports = {
   updatePassword,
   forgotPasswordToken,
   resetPassword,
+  getWishList,
+  saveAddress,
+  userCard,
+  getUserCard,
+  emptyUserCard,
+  applyCoupon,
 };

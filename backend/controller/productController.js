@@ -5,6 +5,7 @@ const slugify = require('slugify');
 const validMongoDbId = require('../utils/validateMongodbId');
 const cloudinary = require('../utils/cloudinary');
 const cloudinaryUploadImage = require('../utils/cloudinary');
+const fs = require('fs');
 
 // create new product
 // @desc    create new product
@@ -253,6 +254,7 @@ const uploadImages = asyncHandler(async (req, res) => {
     // const result = await cloudinary.uploader.upload(path, 'product');
     // console.log(result);
     urls.push(newPath);
+    fs.unlinkSync(path);
   }
 
   // find the product with id and update url
