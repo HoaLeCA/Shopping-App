@@ -10,6 +10,13 @@
 --color-fedb39: #fedb39;
 --color-232f3e: #232f3e;
 --color-bf4880: #bf4880;
+--color-f5f5f7: #f5f5f7;
+--color-ededed: #ededed;
+}
+.card-wrapper{
+  background-color: white;
+  box-shadow: 0 0 10px #0000001a;
+  padding: 15px;
 }
 
 body{
@@ -34,6 +41,9 @@ a{
 }
 .gap-10 {
   gap: 10px;
+}
+.gap-9 {
+  gap: 9px;
 }
 .gap-15 {
   gap: 15px;
@@ -134,18 +144,18 @@ footer .input-group-text {
 
 }
 .small-banner-content p {
-  font-size: 18px;
-  line-height: 28px;
+  font-size: 14px;
+  line-height: 24px;
   letter-spacing: 0.4;
   color: var(--color-131921);
 }
 .small-banner-content{
   top:15%;
-  left: 5%
+  left: 10%
 
 }
 .small-banner-content h4{
-  font-size: 16px;
+  font-size: 14px;
   font-weight: 400;
   line-height: 24px;
   color: var(--color-bf4880);
@@ -155,18 +165,71 @@ footer .input-group-text {
 
   }
   .small-banner-content h5{
-  font-size: 42px;
-  line-height: 54px;
+  font-size: 22px;
+  line-height: 34px;
   font-weight: 500;
   letter-spacing: -2px;
   text-transform: none;
 
 }
 .main-banner-content p {
-  font-size: 18px;
-  line-height: 28px;
+  font-size: 14px;
+  line-height: 22px;
   letter-spacing: 0.4;
   color: var(--color-131921);
 }
+.small-banner{
+  width: 49%;
+}
+
+/* Home Wrapper 2 */
+.home-wrapper-2{
+  background-color: var(--color-f5f5f7);
+}
+/* Home Wrapper 2 end Here */
+
+/* categories sections */
+.categories{
+  background-color: white;
+  box-shadow: 0 0 10px #0000001a;
+  padding: 15px;
+}
+.categories > div {
+  width: 25%;
+  padding: 10px 10px 10px 20px;
+}
+.categories > div:nth-child(1),
+.categories > div:nth-child(2),
+.categories > div:nth-child(3),
+.categories > div:nth-child(4) {
+  border-bottom: 2px solid var(--color-ededed);
+}
+.categories > div:nth-child(1),
+.categories > div:nth-child(2),
+.categories > div:nth-child(3)
+ {
+  border-right: 2px solid var(--color-ededed);
+}
+.categories > div:nth-child(5),
+.categories > div:nth-child(6),
+.categories > div:nth-child(7)
+ {
+  border-right: 2px solid var(--color-ededed);
+}
+/* categories sections end here */
 
 /* Home Page End Here */
+
+/* Blog card part */
+.blog-card{
+  background-color: white;
+ 
+  border-radius: 10px;
+}
+.blog-card img{
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+}
+
+/* Blog card end here */
+
