@@ -128,8 +128,8 @@ function Header() {
                   <div className='d-flex algin-items-center gap-15'>
                     <NavLink to='/'>Home</NavLink>
                     <NavLink to='/store'>Our Stores</NavLink>
-                    <NavLink to='/'>Blogs</NavLink>
-                    <NavLink to='/'>Contacts</NavLink>
+                    <NavLink to='/blog'>Blogs</NavLink>
+                    <NavLink to='/contact'>Contacts</NavLink>
                   </div>
                 </div>
               </div>
