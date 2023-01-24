@@ -15,7 +15,7 @@ const Footer = () => {
               </div>
             </div>
             <div className='col-7'>
-              <div class='input-group '>
+              <div className='input-group '>
                 <input
                   type='text'
                   className='form-control py-1'

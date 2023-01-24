@@ -28,7 +28,7 @@ function Header() {
               </h2>
             </div>
             <div className='col-5'>
-              <div class='input-group '>
+              <div className='input-group '>
                 <input
                   type='text'
                   className='form-control py-2'
@@ -127,7 +127,7 @@ function Header() {
                 <div className='menu-links'>
                   <div className='d-flex algin-items-center gap-15'>
                     <NavLink to='/'>Home</NavLink>
-                    <NavLink to='/'>Our Stores</NavLink>
+                    <NavLink to='/store'>Our Stores</NavLink>
                     <NavLink to='/'>Blogs</NavLink>
                     <NavLink to='/'>Contacts</NavLink>
                   </div>

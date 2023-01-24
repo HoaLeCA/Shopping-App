@@ -2,6 +2,8 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import Marquee from 'react-fast-marquee';
 import Blogcard from '../components/Blogcard';
+import Productcard from '../components/Productcard';
+import Specialproduct from '../components/Specialproduct';
 
 function Home() {
   return (
@@ -200,6 +202,110 @@ function Home() {
           </div>
         </div>
       </section>
+      <section className='featured-wrapper home-wrapper-2 py-5'>
+        <div className='container-xxl'>
+          <div className='row'>
+            <div className='col-12'>
+              <h3 className='section-heading'>Features Collection</h3>
+            </div>
+            <Productcard />
+            <Productcard />
+            <Productcard />
+            <Productcard />
+          </div>
+        </div>
+      </section>
+      <section className='famous-wrapper home-wrapper-2 py-5'>
+        <div className='container-xxl'>
+          <div className='row'>
+            <div className='col-3'>
+              <div className='famous-cart position-relative'>
+                <img
+                  src='images/famous-1.jpg'
+                  className='img-fluid'
+                  alt='famous'
+                />
+                <div className='famous-content position-absolute'>
+                  <h5>Big Screen</h5>
+                  <h6>Smart Watch Series 7</h6>
+                  <p>From $399 or $16.62/mo.for 24mo*</p>
+                </div>
+              </div>
+            </div>
+            <div className='col-3'>
+              <div className='famous-cart position-relative'>
+                <img
+                  src='images/famous-2.png'
+                  className='img-fluid'
+                  alt='famous'
+                />
+                <div className='famous-content position-absolute'>
+                  <h5 className='text-dark'>Big Screen</h5>
+                  <h6 className='text-dark'>App McBook Air</h6>
+                  <p className='text-dark'>From $399 or $16.62/mo.for 24mo*</p>
+                </div>
+              </div>
+            </div>
+            <div className='col-3'>
+              <div className='famous-cart position-relative'>
+                <img
+                  src='images/famous-3.png'
+                  className='img-fluid'
+                  alt='famous'
+                />
+                <div className='famous-content position-absolute'>
+                  <h5 className='text-dark'>Hifi Speacker</h5>
+                  <h6 className='text-dark'>Waterproof Speaker </h6>
+                  <p className='text-dark'>From $399.98 or $16.62/mo.</p>
+                </div>
+              </div>
+            </div>
+            <div className='col-3'>
+              <div className='famous-cart position-relative'>
+                <img
+                  src='images/famous-4.png'
+                  className='img-fluid'
+                  alt='famous'
+                />
+                <div className='famous-content position-absolute'>
+                  <h5 className='text-dark'>Watch</h5>
+                  <h6 className='text-dark'>Series 6s </h6>
+                  <p className='text-dark'>From $399.98 or $16.62/mo.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className='special-wrapper home-wrapper-2 py-5'>
+        <div className='container-xxl'>
+          <div className='row'>
+            <div className='col-12'>
+              <h3 className='section-heading'>Special Products</h3>
+            </div>
+          </div>
+          <div className='row'>
+            <Specialproduct />
+            <Specialproduct />
+            <Specialproduct />
+            <Specialproduct />
+          </div>
+        </div>
+      </section>
+      <section className='popular-wrapper home-wrapper-2 py-5'>
+        <div className='container-xxl'>
+          <div className='row'>
+            <div className='col-12'>
+              <h3 className='section-heading'>Our Popular Products</h3>
+            </div>
+            <Productcard />
+            <Productcard />
+            <Productcard />
+            <Productcard />
+          </div>
+        </div>
+      </section>
       <section className='marquee-wrapper home-wrapper-2 py-5'>
         <div className='container-xxl'>
           <div className='col-12'>
@@ -237,6 +343,9 @@ function Home() {
       <section className='blog-wrapper home-wrapper-2 py-5'>
         <div className='container-xxl'>
           <div className='row'>
+            <div className='col-12'>
+              <h3 className='section-heading'>Our Latest Blogs</h3>
+            </div>
             <Blogcard />
             <Blogcard />
             <Blogcard />
