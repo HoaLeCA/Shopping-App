@@ -3,6 +3,7 @@ import BreadCrumb from '../components/BreadCrumb';
 import ReactStars from 'react-rating-stars-component';
 import Productcard from '../components/Productcard';
 import Meta from '../components/Meta';
+import Color from '../components/Color';
 
 const Ourstore = () => {
   // set default grid
@@ -83,18 +84,7 @@ const Ourstore = () => {
                 </div>
                 <h5 className='sub-title'> Colors</h5>
                 <div>
-                  <ul className='colors ps-0'>
-                    <li></li>
-                    <li></li>
-                    <li></li>
-                    <li></li>
-                    <li></li>
-                    <li></li>
-                    <li></li>
-                    <li></li>
-                    <li></li>
-                    <li></li>
-                  </ul>
+                  <Color />
                 </div>
                 <h5 className='sub-title'> Sizes</h5>
                 <div>

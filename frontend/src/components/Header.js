@@ -24,7 +24,9 @@ function Header() {
           <div className='row'>
             <div className='col-2'>
               <h2>
-                <Link className='text-white'>Hoa CA</Link>
+                <Link to='/' className='text-white'>
+                  Hoa CA
+                </Link>
               </h2>
             </div>
             <div className='col-5'>
@@ -44,32 +46,44 @@ function Header() {
             <div className='col-5'>
               <div className='header-upper-links d-flex align-items-center justify-content-between'>
                 <div>
-                  <Link className='d-flex align-items center gap-1 text-white'>
-                    <img src='images/compare.svg' alt='compare' />
+                  <Link
+                    to='/compare-product'
+                    className='d-flex align-items center gap-2 text-white'
+                  >
+                    <img src='/images/compare.svg' alt='compare' />
                     <p className='mb-0'>
                       Compare <br /> Product
                     </p>
                   </Link>
                 </div>
                 <div>
-                  <Link className='d-flex align-items center gap-1 text-white'>
-                    <img src='images/wishlist.svg' alt='wishlist' />
+                  <Link
+                    to='/wishlist'
+                    className='d-flex align-items center gap-1 text-white'
+                  >
+                    <img src='/images/wishlist.svg' alt='wishlist' />
                     <p className='mb-0'>
                       Favourite <br /> Wishlist
                     </p>
                   </Link>
                 </div>
                 <div>
-                  <Link className='d-flex align-items center gap-1 text-white'>
-                    <img src='images/user.svg' alt='user' />
+                  <Link
+                    to='/login'
+                    className='d-flex align-items center gap-1 text-white'
+                  >
+                    <img src='/images/user.svg' alt='user' />
                     <p className='mb-0'>
                       Log in <br /> My Account
                     </p>
                   </Link>
                 </div>
                 <div>
-                  <Link className='d-flex align-items center gap-1 text-white'>
-                    <img src='images/cart.svg' alt='card' />
+                  <Link
+                    to='/cart'
+                    className='d-flex align-items center gap-1 text-white'
+                  >
+                    <img src='/images/cart.svg' alt='cart' />
                     <div>
                       <div className='d-flex flex-column'>
                         <span className='badge bg-white text-dark'>0</span>
@@ -127,7 +141,7 @@ function Header() {
                 <div className='menu-links'>
                   <div className='d-flex algin-items-center gap-15'>
                     <NavLink to='/'>Home</NavLink>
-                    <NavLink to='/store'>Our Stores</NavLink>
+                    <NavLink to='/product'>Our Stores</NavLink>
                     <NavLink to='/blog'>Blogs</NavLink>
                     <NavLink to='/contact'>Contacts</NavLink>
                   </div>

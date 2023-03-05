@@ -172,6 +172,7 @@ const handleRefreshToken = asyncHandler(async (req, res) => {
 
 const logout = asyncHandler(async (req, res) => {
   const cookie = req.cookies;
+  console.log(cookie);
   if (!cookie?.refreshToken) throw new Error('No refreshToken');
   const refreshToken = cookie.refreshToken;
   //find user with refresh token in database

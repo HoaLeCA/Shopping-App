@@ -3,8 +3,11 @@ const asyncHandler = require('express-async-handler');
 const User = require('../models/userModel');
 const slugify = require('slugify');
 const validMongoDbId = require('../utils/validateMongodbId');
-const cloudinary = require('../utils/cloudinary');
-const cloudinaryUploadImage = require('../utils/cloudinary');
+const {
+  cloudinaryUploadImage,
+  cloudinaryDeleteImage,
+} = require('../utils/cloudinary');
+
 const fs = require('fs');
 
 // create new product
@@ -243,36 +246,37 @@ const rating = asyncHandler(async (req, res) => {
 // @access Private/admin only
 
 const uploadImages = asyncHandler(async (req, res) => {
-  const { id } = req.params;
-  validMongoDbId(id);
-  const uploader = (path) => cloudinaryUploadImage(path, 'images');
-  const files = req.files;
-  const urls = [];
-  for (const file of files) {
-    const { path } = file;
-    const newPath = await uploader(path);
-    // const result = await cloudinary.uploader.upload(path, 'product');
-    // console.log(result);
-    urls.push(newPath);
-    fs.unlinkSync(path);
-  }
-
-  // find the product with id and update url
-
-  const findProduct = await Product.findByIdAndUpdate(
-    id,
-    {
-      $set: { images: urls },
-    },
-    {
-      new: true,
+  try {
+    const uploader = (path) => cloudinaryUploadImage(path, 'images');
+    const files = req.files;
+    const urls = [];
+    for (const file of files) {
+      const { path } = file;
+      const newPath = await uploader(path);
+      urls.push(newPath);
+      fs.unlinkSync(path);
     }
-  );
-  if (!findProduct) {
-    res.status(404).json({ message: 'Product not found' });
-    return;
+    const images = urls.map((file) => {
+      return file;
+    });
+    res.json(images);
+  } catch (error) {
+    throw new Error(error);
   }
-  res.json(findProduct);
+});
+
+// delete images
+
+const deleteImages = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const deletedImage = cloudinaryDeleteImage(id, 'images');
+    res.json({ message: 'Image deleted' });
+  } catch (error) {
+    res.status(401);
+    throw new Error(error);
+  }
 });
 
 module.exports = {
@@ -284,4 +288,5 @@ module.exports = {
   toWishList,
   rating,
   uploadImages,
+  deleteImages,
 };
